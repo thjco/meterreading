@@ -80,6 +80,13 @@ def select_all_entries(conn):
 
     columns = "id rdate gas".split()
     df = pd.DataFrame(rows, columns=columns).set_index("id")
+
+    df["datetime"] = pd.to_datetime(df.rdate, unit="ms")
+    df["day_of_year"] = df.datetime.dt.dayofyear
+    df["m_of_year"] = df["day_of_year"] / 365. * 12.
+    df["year"] = df.datetime.dt.year
+    df["days"] = (df.rdate - df.rdate.shift())/1000./60./60./24.
+
     return df
 
 
