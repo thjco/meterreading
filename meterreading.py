@@ -33,27 +33,12 @@ with tab_entry:
         submitted = st.form_submit_button("Speichern")
 
 with tab_analysis:
-    gas_per_day = entries.dropna().copy()
-    gas_per_day["d_gas"] = (gas_per_day.gas - gas_per_day.gas.shift())
-    gas_per_day["gas_per_day"] = gas_per_day.d_gas / gas_per_day.days
-    gas_per_day = gas_per_day.query("gas_per_day > 0").copy()
-
-    if gas_per_day.shape[0] > 0:
-        fig, ax = plt.subplots()
-        #ax.plot(consumption["consumption"], label="Verbrauch", color="b", marker="o", linewidth=2, markersize=6)
-        plt.plot_date(gas_per_day["datetime"], gas_per_day["gas_per_day"], fmt="-");
-        plt.legend()
+    gaszaehler = CountUpDevice("Gas", "gas", "m³")
+    gaszaehler.set_values(entries)
+    if gaszaehler.has_per_day_values():
+        fig = gaszaehler.get_per_day_fig()
         st.pyplot(fig)
-
-        years = sorted(set(gas_per_day.year.to_list()))
-        fig, ax = plt.subplots()
-        ax.set_xticks(list(range(13)))
-        for year in years[:-1]:
-            y = gas_per_day.query(f"year == {year}")
-            plt.plot(y["m_of_year"], y["gas_per_day"], c="LightGrey")
-        y = gas_per_day.query(f"year == {years[-1]}")
-        plt.plot(y["m_of_year"], y["gas_per_day"], c="Blue")
-        plt.grid()
+        fig = gaszaehler.get_per_day_of_year_fig()
         st.pyplot(fig)
 
 with tab_data:
