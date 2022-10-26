@@ -29,16 +29,32 @@ with tab_entry:
         r_time = st.time_input("Uhrzeit", value=now.time())
 
         gas = st.number_input("Gas", min_value=0., step=0.001, value=0.0, format="%.3f")
+        water = st.number_input("Water", min_value=0., step=0.001, value=0.0, format="%.3f")
+        electricity = st.number_input("Electricity", min_value=0., step=0.1, value=0.0, format="%.1f")
 
         submitted = st.form_submit_button("Speichern")
 
 with tab_analysis:
-    gaszaehler = CountUpDevice("Gas", "gas", "m³")
-    gaszaehler.set_values(entries)
-    if gaszaehler.has_per_day_values():
-        fig = gaszaehler.get_per_day_fig()
+    gas_device = CountUpDevice("Gas", "gas", "m³", "Red")
+    gas_device.set_values(entries)
+    if gas_device.has_per_day_values():
+        fig = gas_device.get_per_day_fig()
         st.pyplot(fig)
-        fig = gaszaehler.get_per_day_of_year_fig()
+        fig = gas_device.get_per_day_of_year_fig()
+        st.pyplot(fig)
+    water_device = CountUpDevice("Water", "water", "m³", "Blue")
+    water_device.set_values(entries)
+    if water_device.has_per_day_values():
+        fig = water_device.get_per_day_fig()
+        st.pyplot(fig)
+        fig = water_device.get_per_day_of_year_fig()
+        st.pyplot(fig)
+    electricity_device = CountUpDevice("Electricity", "electricity", "kWh", "Green")
+    electricity_device.set_values(entries)
+    if water_device.has_per_day_values():
+        fig = electricity_device.get_per_day_fig()
+        st.pyplot(fig)
+        fig = electricity_device.get_per_day_of_year_fig()
         st.pyplot(fig)
 
 with tab_data:

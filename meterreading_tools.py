@@ -11,7 +11,9 @@ ENSURE_MR_TABLE_SQL = """
     CREATE TABLE IF NOT EXISTS mr (
         id integer PRIMARY KEY,
         rdate datetime NOT NULL,
-        gas float NOT NULL
+        gas float NOT NULL,
+        water float NOT NULL,
+        electricity float NOT NULL
     );
 """
 
@@ -20,12 +22,12 @@ DROP_MR_TABLE = """
 """
 
 MR_INSERT_SQL = """
-    INSERT INTO mr (rdate, gas)
-        VALUES(?, ?);
+    INSERT INTO mr (rdate, gas, water, electricity)
+        VALUES(?, ?, ?, ?);
 """
 
 MR_SELECT_SQL = """
-    SELECT id, rdate, gas FROM mr ORDER BY rdate ASC;
+    SELECT id, rdate, gas, water, electricity FROM mr ORDER BY rdate ASC;
 """
 
 
@@ -64,7 +66,7 @@ def create_entry(conn, entry):
     :param conn: connection object
     :param entry: entry to be stored
     """
-    values = (entry["rdate"], entry["gas"])
+    values = (entry["rdate"], entry["gas"], entry["water"], entry["electricity"])
     cur = conn.cursor()
     cur.execute(MR_INSERT_SQL, values)
     conn.commit()
@@ -79,7 +81,7 @@ def select_all_entries(conn):
     cur.execute(MR_SELECT_SQL)
     rows = cur.fetchall()
 
-    columns = "id rdate gas".split()
+    columns = "id rdate gas water electricity".split()
     df = pd.DataFrame(rows, columns=columns).set_index("id")
 
     df["datetime"] = pd.to_datetime(df.rdate, unit="ms")
@@ -109,10 +111,11 @@ def set_example_data():
 
 class CountUpDevice:
 
-    def __init__(self, name: str, column: str, unit: str):
+    def __init__(self, name: str, column: str, unit: str, color: str):
         self.name = name
         self.column = column
         self.unit = unit
+        self.color = color
 
         self.per_day = None
 
@@ -130,7 +133,7 @@ class CountUpDevice:
 
     def get_per_day_fig(self):
         fig, ax = plt.subplots()
-        plt.plot_date(self.per_day["datetime"], self.per_day["per_day"], fmt="-");
+        plt.plot_date(self.per_day["datetime"], self.per_day["per_day"], fmt="-", color=self.color);
         plt.title(f"Mean {self.name} per day in {self.unit}")
         return fig
 
@@ -143,7 +146,7 @@ class CountUpDevice:
             y = self.per_day.query(f"year == {year}")
             plt.plot(y["m_of_year"], y["per_day"], c="LightGrey")
         y = self.per_day.query(f"year == {years[-1]}")
-        plt.plot(y["m_of_year"], y["per_day"], c="Blue")
+        plt.plot(y["m_of_year"], y["per_day"], c=self.color)
         plt.grid()
         plt.title(f"Mean {self.name} per Day of Year in {self.unit}")
         return fig
