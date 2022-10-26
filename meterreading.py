@@ -58,4 +58,4 @@ with tab_analysis:
         st.pyplot(fig)
 
 with tab_data:
-    st.dataframe(entries)
+    st.dataframe(entries[::-1])
