@@ -42,6 +42,10 @@ with tab_analysis:
         st.pyplot(fig)
         fig = gas_device.get_per_day_of_year_fig()
         st.pyplot(fig)
+    if gas_device.has_per_year_values():
+        fig = gas_device.get_per_year_fig()
+        st.pyplot(fig)
+
     water_device = CountUpDevice("Water", "water", "m³", "Blue")
     water_device.set_values(entries)
     if water_device.has_per_day_values():
@@ -49,6 +53,10 @@ with tab_analysis:
         st.pyplot(fig)
         fig = water_device.get_per_day_of_year_fig()
         st.pyplot(fig)
+    if water_device.has_per_year_values():
+        fig = water_device.get_per_year_fig()
+        st.pyplot(fig)
+
     electricity_device = CountUpDevice("Electricity", "electricity", "kWh", "Green")
     electricity_device.set_values(entries)
     if water_device.has_per_day_values():
@@ -56,6 +64,10 @@ with tab_analysis:
         st.pyplot(fig)
         fig = electricity_device.get_per_day_of_year_fig()
         st.pyplot(fig)
+    if electricity_device.has_per_year_values():
+        fig = electricity_device.get_per_year_fig()
+        st.pyplot(fig)
+
 
 with tab_data:
     st.dataframe(entries[::-1])

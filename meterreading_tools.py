@@ -118,17 +118,26 @@ class CountUpDevice:
         self.color = color
 
         self.per_day = None
+        self.per_year = None
 
 
     def set_values(self, values: pd.DataFrame):
         df = values.dropna().copy()
         df["d_value"] = (df[self.column] - df[self.column].shift())
         df["per_day"] = df["d_value"] / df.days
-        self.per_day = df.query("per_day > 0").copy()
+        df = df.query("per_day > 0")
+        self.per_day = df.copy()
+
+        per_year = df.groupby("year")["d_value"].sum()
+        self.per_year = per_year.iloc[1:-1]
 
 
     def has_per_day_values(self) -> bool:
         return self.per_day.shape[0] > 0
+
+
+    def has_per_year_values(self) -> bool:
+        return self.per_year.shape[0] > 0
 
 
     def get_per_day_fig(self):
@@ -149,4 +158,11 @@ class CountUpDevice:
         plt.plot(y["m_of_year"], y["per_day"], c=self.color)
         plt.grid()
         plt.title(f"Mean {self.name} per Day of Year in {self.unit}")
+        return fig
+
+
+    def get_per_year_fig(self):
+        fig, ax = plt.subplots()
+        plt.bar(x=self.per_year.index, height=self.per_year.values, color=self.color)
+        plt.title(f"Total {self.name} in {self.unit}")
         return fig
