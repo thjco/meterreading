@@ -127,9 +127,7 @@ class CountUpDevice:
         df["per_day"] = df["d_value"] / df.days
         df = df.query("per_day > 0")
         self.per_day = df.copy()
-
-        per_year = df.groupby("year")["d_value"].sum()
-        self.per_year = per_year.iloc[1:-1]
+        self.per_year = df.groupby("year")["d_value"].sum()
 
 
     def has_per_day_values(self) -> bool:
