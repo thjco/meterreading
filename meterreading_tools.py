@@ -119,6 +119,7 @@ class CountUpDevice:
 
         self.per_day = None
         self.per_year = None
+        self.years = []
 
 
     def set_values(self, values: pd.DataFrame):
@@ -145,15 +146,16 @@ class CountUpDevice:
         return fig
 
 
-    def get_per_day_of_year_fig(self):
+    def get_per_day_of_year_fig(self, selected_year: str):
         years = sorted(set(self.per_day.year.to_list()))
         fig, ax = plt.subplots()
         ax.set_xticks(list(range(13)))
-        for year in years[:-1]:
+        for year in years:
             y = self.per_day.query(f"year == {year}")
-            plt.plot(y["m_of_year"], y["per_day"], c="LightGrey")
-        y = self.per_day.query(f"year == {years[-1]}")
-        plt.plot(y["m_of_year"], y["per_day"], c=self.color)
+            plt.plot(y["m_of_year"], y["per_day"], c="LightGrey", label="")
+        y = self.per_day.query(f"year == {selected_year}")
+        plt.plot(y["m_of_year"], y["per_day"], c=self.color, label=selected_year)
+        plt.legend()
         plt.grid()
         plt.title(f"Mean {self.name} per Day of Year in {self.unit}")
         return fig

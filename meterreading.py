@@ -35,12 +35,17 @@ with tab_entry:
         submitted = st.form_submit_button("Speichern")
 
 with tab_analysis:
+    years = sorted(set(entries.year.to_list()))
+    last_year = years[-1]
+    idx = years.index(last_year)
+    selected_year = st.selectbox("Jahr", years, index=idx)
+
     gas_device = CountUpDevice("Gas", "gas", "m³", "Red")
     gas_device.set_values(entries)
     if gas_device.has_per_day_values():
         fig = gas_device.get_per_day_fig()
         st.pyplot(fig)
-        fig = gas_device.get_per_day_of_year_fig()
+        fig = gas_device.get_per_day_of_year_fig(selected_year)
         st.pyplot(fig)
     if gas_device.has_per_year_values():
         fig = gas_device.get_per_year_fig()
@@ -51,7 +56,7 @@ with tab_analysis:
     if water_device.has_per_day_values():
         fig = water_device.get_per_day_fig()
         st.pyplot(fig)
-        fig = water_device.get_per_day_of_year_fig()
+        fig = water_device.get_per_day_of_year_fig(selected_year)
         st.pyplot(fig)
     if water_device.has_per_year_values():
         fig = water_device.get_per_year_fig()
@@ -62,7 +67,7 @@ with tab_analysis:
     if water_device.has_per_day_values():
         fig = electricity_device.get_per_day_fig()
         st.pyplot(fig)
-        fig = electricity_device.get_per_day_of_year_fig()
+        fig = electricity_device.get_per_day_of_year_fig(selected_year)
         st.pyplot(fig)
     if electricity_device.has_per_year_values():
         fig = electricity_device.get_per_year_fig()
