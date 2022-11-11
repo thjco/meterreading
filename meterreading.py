@@ -34,6 +34,15 @@ with tab_entry:
 
         submitted = st.form_submit_button("Speichern")
 
+    if submitted:
+        # TODO Close connection at this point?
+        r_datetime = datetime.combine(r_date, r_time)
+        r_datetime = int(r_datetime.timestamp() * 1000)
+        data = { "rdate": r_datetime, "gas": gas, "water": water, "electricity": electricity}
+        df = pd.DataFrame([data])
+        create_entry(conn, df.iloc[0])
+        entries = select_all_entries(conn)
+
 with tab_analysis:
     years = sorted(set(entries.year.to_list()))
     last_year = years[-1]
