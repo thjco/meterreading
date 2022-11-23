@@ -7,17 +7,22 @@ from meterreading_tools import *
 st.set_page_config(page_title="Meter Reading", initial_sidebar_state="collapsed")
 st.title("Zählerstände")
 
-with st.sidebar:
-    if st.button("Daten löschen"):
-        drop_tables()
-
-    if st.button("Beispieldaten"):
-        set_example_data()
-
 conn = create_connection(DB_FILE)
 ensure_tables(conn)
 
 entries = select_all_entries(conn)
+
+with st.sidebar:
+    if st.button("Daten löschen"):
+        drop_tables()
+        entries = []
+
+    if st.button("Beispieldaten"):
+        set_example_data()
+
+    download_json = entries.to_json( orient="records") if len(entries) else "[]"
+    download_filename = f"meterreading-{datetime.today().strftime('%Y%m%d-%H%M%S')}.json"
+    st.download_button("Daten exportieren", data=download_json, file_name=download_filename)
 
 tab_entry, tab_analysis, tab_data = st.tabs(["Eingabe", "Auswertung", "Daten"])
 
