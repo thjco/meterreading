@@ -19,6 +19,7 @@ with st.sidebar:
 
     if st.button("Beispieldaten verwenden"):
         set_example_data()
+        entries = select_all_entries(conn)
 
     download_json = entries.to_json( orient="records") if len(entries) else "[]"
     download_filename = f"meterreading-{datetime.today().strftime('%Y%m%d-%H%M%S')}.json"
