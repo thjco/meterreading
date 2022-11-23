@@ -111,11 +111,12 @@ def set_example_data():
 
 class CountUpDevice:
 
-    def __init__(self, name: str, column: str, unit: str, color: str):
+    def __init__(self, name: str, column: str, unit: str, lightColor: str, darkColor: str):
         self.name = name
         self.column = column
         self.unit = unit
-        self.color = color
+        self.lightColor = lightColor
+        self.darkColor = darkColor
 
         self.per_day = None
         self.per_year = None
@@ -127,8 +128,13 @@ class CountUpDevice:
         df["d_value"] = (df[self.column] - df[self.column].shift())
         df["per_day"] = df["d_value"] / df.days
         df = df.query("per_day > 0")
+
+        latest_entry = values.iloc[-1]
+        day_of_year = latest_entry["day_of_year"]
+
         self.per_day = df.copy()
         self.per_year = df.groupby("year")["d_value"].sum()
+        self.until_day_of_year = df[df["day_of_year"] <= day_of_year].groupby("year")["d_value"].sum()
 
 
     def has_per_day_values(self) -> bool:
@@ -141,7 +147,7 @@ class CountUpDevice:
 
     def get_per_day_fig(self):
         fig, ax = plt.subplots()
-        plt.plot_date(self.per_day["datetime"], self.per_day["per_day"], fmt="-", color=self.color);
+        plt.plot_date(self.per_day["datetime"], self.per_day["per_day"], fmt="-", color=self.darkColor);
         plt.title(f"Mean {self.name} per day in {self.unit}")
         return fig
 
@@ -154,7 +160,7 @@ class CountUpDevice:
             y = self.per_day.query(f"year == {year}")
             plt.plot(y["m_of_year"], y["per_day"], c="LightGrey", label="")
         y = self.per_day.query(f"year == {selected_year}")
-        plt.plot(y["m_of_year"], y["per_day"], c=self.color, label=selected_year)
+        plt.plot(y["m_of_year"], y["per_day"], c=self.darkColor, label=selected_year)
         plt.legend()
         plt.grid()
         plt.title(f"Mean {self.name} per Day of Year in {self.unit}")
@@ -163,6 +169,7 @@ class CountUpDevice:
 
     def get_per_year_fig(self):
         fig, ax = plt.subplots()
-        plt.bar(x=self.per_year.index, height=self.per_year.values, color=self.color)
+        plt.bar(x=self.per_year.index, height=self.per_year.values, color=self.lightColor)
+        plt.bar(x=self.until_day_of_year.index, height=self.until_day_of_year.values, color=self.darkColor)
         plt.title(f"Total {self.name} in {self.unit}")
         return fig

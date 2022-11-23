@@ -55,7 +55,7 @@ with tab_analysis:
     idx = years.index(last_year)
     selected_year = st.selectbox("Jahr", years, index=idx)
 
-    gas_device = CountUpDevice("Gas", "gas", "m³", "Red")
+    gas_device = CountUpDevice("Gas", "gas", "m³", "DarkSalmon", "Red")
     gas_device.set_values(entries)
     if gas_device.has_per_day_values():
         fig = gas_device.get_per_day_fig()
@@ -66,7 +66,7 @@ with tab_analysis:
         fig = gas_device.get_per_year_fig()
         st.pyplot(fig)
 
-    water_device = CountUpDevice("Water", "water", "m³", "Blue")
+    water_device = CountUpDevice("Water", "water", "m³", "CornFlowerBlue", "Blue")
     water_device.set_values(entries)
     if water_device.has_per_day_values():
         fig = water_device.get_per_day_fig()
@@ -77,7 +77,7 @@ with tab_analysis:
         fig = water_device.get_per_year_fig()
         st.pyplot(fig)
 
-    electricity_device = CountUpDevice("Electricity", "electricity", "kWh", "Green")
+    electricity_device = CountUpDevice("Electricity", "electricity", "kWh", "LimeGreen", "Green")
     electricity_device.set_values(entries)
     if water_device.has_per_day_values():
         fig = electricity_device.get_per_day_fig()
