@@ -17,7 +17,7 @@ with st.sidebar:
         drop_tables()
         entries = []
 
-    if st.button("Beispieldaten"):
+    if st.button("Beispieldaten verwenden"):
         set_example_data()
 
     download_json = entries.to_json( orient="records") if len(entries) else "[]"
