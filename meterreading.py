@@ -1,7 +1,9 @@
 import streamlit as st
 import matplotlib.pyplot as plt
+import json
 from datetime import datetime
 from meterreading_tools import *
+from io import StringIO
 
 
 st.set_page_config(page_title="Meter Reading", initial_sidebar_state="collapsed")
@@ -28,6 +30,16 @@ with st.sidebar:
     st.download_button(
         "Daten exportieren", data=download_json, file_name=download_filename
     )
+
+    uploaded_file = st.file_uploader("Daten importieren")
+    if uploaded_file is not None:
+        bytes_data = uploaded_file.getvalue()
+        stringio = StringIO(uploaded_file.getvalue().decode("utf-8"))
+        string_data = stringio.read()
+        #TODO finalize import
+        e = json.loads(string_data)
+        #e = pd.DataFrame(e)
+        st.write(type(entries))
 
 tab_entry, tab_analysis, tab_data = st.tabs(["Eingabe", "Auswertung", "Daten"])
 

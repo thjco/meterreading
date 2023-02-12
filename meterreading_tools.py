@@ -117,10 +117,8 @@ def select_all_entries(conn):
     return df
 
 
-def set_example_data():
-    with open(EXAMPLE_FILE) as f:
-        entries = json.load(f)
-    entries = pd.DataFrame(entries).sort_values("rdate")
+def set_data(entries: pd.DataFrame):
+    entries = entries.sort_values("rdate")
 
     drop_tables()
 
@@ -131,6 +129,13 @@ def set_example_data():
         create_entry(conn, entry)
 
     conn.close()
+
+
+def set_example_data():
+    with open(EXAMPLE_FILE) as f:
+        entries = json.load(f)
+    entries = pd.DataFrame(entries)
+    set_data(entries)
 
 
 class CountUpDevice:
