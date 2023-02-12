@@ -21,9 +21,13 @@ with st.sidebar:
         set_example_data()
         entries = select_all_entries(conn)
 
-    download_json = entries.to_json( orient="records") if len(entries) else "[]"
-    download_filename = f"meterreading-{datetime.today().strftime('%Y%m%d-%H%M%S')}.json"
-    st.download_button("Daten exportieren", data=download_json, file_name=download_filename)
+    download_json = entries.to_json(orient="records") if len(entries) else "[]"
+    download_filename = (
+        f"meterreading-{datetime.today().strftime('%Y%m%d-%H%M%S')}.json"
+    )
+    st.download_button(
+        "Daten exportieren", data=download_json, file_name=download_filename
+    )
 
 tab_entry, tab_analysis, tab_data = st.tabs(["Eingabe", "Auswertung", "Daten"])
 
@@ -31,12 +35,18 @@ with tab_entry:
     with st.form("input"):
         now = datetime.today()
 
-        r_date = st.date_input("Datum", value=now.date()) # value="2022/10/02") #
+        r_date = st.date_input("Datum", value=now.date())  # value="2022/10/02") #
         r_time = st.time_input("Uhrzeit", value=now.time())
 
-        gas = st.number_input("Gas", min_value=0., step=0.001, value=0.0, format="%.3f")
-        water = st.number_input("Water", min_value=0., step=0.001, value=0.0, format="%.3f")
-        electricity = st.number_input("Electricity", min_value=0., step=0.1, value=0.0, format="%.1f")
+        gas = st.number_input(
+            "Gas", min_value=0.0, step=0.001, value=0.0, format="%.3f"
+        )
+        water = st.number_input(
+            "Water", min_value=0.0, step=0.001, value=0.0, format="%.3f"
+        )
+        electricity = st.number_input(
+            "Electricity", min_value=0.0, step=0.1, value=0.0, format="%.1f"
+        )
 
         submitted = st.form_submit_button("Speichern")
 
@@ -44,7 +54,12 @@ with tab_entry:
         # TODO Close connection at this point?
         r_datetime = datetime.combine(r_date, r_time)
         r_datetime = int(r_datetime.timestamp() * 1000)
-        data = { "rdate": r_datetime, "gas": gas, "water": water, "electricity": electricity}
+        data = {
+            "rdate": r_datetime,
+            "gas": gas,
+            "water": water,
+            "electricity": electricity,
+        }
         df = pd.DataFrame([data])
         create_entry(conn, df.iloc[0])
         entries = select_all_entries(conn)

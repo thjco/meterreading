@@ -56,7 +56,7 @@ MR_SELECT_SQL = """
 
 
 def create_connection(db_file):
-    """ create a database connection to the SQLite database
+    """create a database connection to the SQLite database
         specified by db_file
     :param db_file: database file
     :return: connection object or None
@@ -110,9 +110,9 @@ def select_all_entries(conn):
 
     df["datetime"] = pd.to_datetime(df.rdate, unit="ms")
     df["day_of_year"] = df.datetime.dt.dayofyear
-    df["m_of_year"] = df["day_of_year"] / 365. * 12.
+    df["m_of_year"] = df["day_of_year"] / 365.0 * 12.0
     df["year"] = df.datetime.dt.year
-    df["days"] = (df.rdate - df.rdate.shift())/1000./60./60./24.
+    df["days"] = (df.rdate - df.rdate.shift()) / 1000.0 / 60.0 / 60.0 / 24.0
 
     return df
 
@@ -134,8 +134,9 @@ def set_example_data():
 
 
 class CountUpDevice:
-
-    def __init__(self, name: str, column: str, unit: str, lightColor: str, darkColor: str):
+    def __init__(
+        self, name: str, column: str, unit: str, lightColor: str, darkColor: str
+    ):
         self.name = name
         self.column = column
         self.unit = unit
@@ -146,10 +147,9 @@ class CountUpDevice:
         self.per_year = None
         self.years = []
 
-
     def set_values(self, values: pd.DataFrame):
         df = values.dropna().copy()
-        df["d_value"] = (df[self.column] - df[self.column].shift())
+        df["d_value"] = df[self.column] - df[self.column].shift()
         df["per_day"] = df["d_value"] / df.days
         df = df.query("per_day > 0")
 
@@ -158,23 +158,26 @@ class CountUpDevice:
 
         self.per_day = df.copy()
         self.per_year = df.groupby("year")["d_value"].sum()
-        self.until_day_of_year = df[df["day_of_year"] <= day_of_year].groupby("year")["d_value"].sum()
-
+        self.until_day_of_year = (
+            df[df["day_of_year"] <= day_of_year].groupby("year")["d_value"].sum()
+        )
 
     def has_per_day_values(self) -> bool:
         return self.per_day.shape[0] > 0
 
-
     def has_per_year_values(self) -> bool:
         return self.per_year.shape[0] > 0
 
-
     def get_per_day_fig(self):
         fig, ax = plt.subplots()
-        plt.plot_date(self.per_day["datetime"], self.per_day["per_day"], fmt="-", color=self.darkColor);
+        plt.plot_date(
+            self.per_day["datetime"],
+            self.per_day["per_day"],
+            fmt="-",
+            color=self.darkColor,
+        )
         plt.title(f"Mean {self.name} per day in {self.unit}")
         return fig
-
 
     def get_per_day_of_year_fig(self, selected_year: str):
         years = sorted(set(self.per_day.year.to_list()))
@@ -190,10 +193,15 @@ class CountUpDevice:
         plt.title(f"Mean {self.name} per Day of Year in {self.unit}")
         return fig
 
-
     def get_per_year_fig(self):
         fig, ax = plt.subplots()
-        plt.bar(x=self.per_year.index, height=self.per_year.values, color=self.lightColor)
-        plt.bar(x=self.until_day_of_year.index, height=self.until_day_of_year.values, color=self.darkColor)
+        plt.bar(
+            x=self.per_year.index, height=self.per_year.values, color=self.lightColor
+        )
+        plt.bar(
+            x=self.until_day_of_year.index,
+            height=self.until_day_of_year.values,
+            color=self.darkColor,
+        )
         plt.title(f"Total {self.name} in {self.unit}")
         return fig
