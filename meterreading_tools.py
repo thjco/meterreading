@@ -7,6 +7,30 @@ import matplotlib.pyplot as plt
 DB_FILE = "meterreading.db"
 EXAMPLE_FILE = "mr-examples.json"
 
+COUNT_UP_DEVICES_CONFIGURATION = [
+    {
+        "name": "Gas",
+        "column": "gas",
+        "unit": "m³",
+        "lightColor": "DarkSalmon",
+        "darkColor": "red",
+    },
+    {
+        "name": "Water",
+        "column": "water",
+        "unit": "m³",
+        "lightColor": "CornFlowerBlue",
+        "darkColor": "Blue",
+    },
+    {
+        "name": "Electricity",
+        "column": "electricity",
+        "unit": "kWh",
+        "lightColor": "LimeGreen",
+        "darkColor": "Green",
+    },
+]
+
 ENSURE_MR_TABLE_SQL = """
     CREATE TABLE IF NOT EXISTS mr (
         id integer PRIMARY KEY,

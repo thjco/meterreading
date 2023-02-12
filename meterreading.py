@@ -55,39 +55,19 @@ with tab_analysis:
     idx = years.index(last_year)
     selected_year = st.selectbox("Jahr", years, index=idx)
 
-    gas_device = CountUpDevice("Gas", "gas", "m³", "DarkSalmon", "Red")
-    gas_device.set_values(entries)
-    if gas_device.has_per_day_values():
-        fig = gas_device.get_per_day_fig()
-        st.pyplot(fig)
-        fig = gas_device.get_per_day_of_year_fig(selected_year)
-        st.pyplot(fig)
-    if gas_device.has_per_year_values():
-        fig = gas_device.get_per_year_fig()
-        st.pyplot(fig)
-
-    water_device = CountUpDevice("Water", "water", "m³", "CornFlowerBlue", "Blue")
-    water_device.set_values(entries)
-    if water_device.has_per_day_values():
-        fig = water_device.get_per_day_fig()
-        st.pyplot(fig)
-        fig = water_device.get_per_day_of_year_fig(selected_year)
-        st.pyplot(fig)
-    if water_device.has_per_year_values():
-        fig = water_device.get_per_year_fig()
-        st.pyplot(fig)
-
-    electricity_device = CountUpDevice("Electricity", "electricity", "kWh", "LimeGreen", "Green")
-    electricity_device.set_values(entries)
-    if water_device.has_per_day_values():
-        fig = electricity_device.get_per_day_fig()
-        st.pyplot(fig)
-        fig = electricity_device.get_per_day_of_year_fig(selected_year)
-        st.pyplot(fig)
-    if electricity_device.has_per_year_values():
-        fig = electricity_device.get_per_year_fig()
-        st.pyplot(fig)
-
+    for conf in COUNT_UP_DEVICES_CONFIGURATION:
+        device = CountUpDevice(
+            conf["name"], conf["column"], conf["unit"], conf["lightColor"], conf["darkColor"]
+        )
+        device.set_values(entries)
+        if device.has_per_day_values():
+            fig = device.get_per_day_fig()
+            st.pyplot(fig)
+            fig = device.get_per_day_of_year_fig(selected_year)
+            st.pyplot(fig)
+        if device.has_per_year_values():
+            fig = device.get_per_year_fig()
+            st.pyplot(fig)
 
 with tab_data:
     st.dataframe(entries[::-1])
